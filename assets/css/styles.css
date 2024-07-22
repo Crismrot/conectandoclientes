@@ -1,0 +1,12 @@
+/* assets/css/styles.css */
+body {
+    padding-top: 20px;
+}
+
+.step {
+    display: none;
+}
+
+.step.active {
+    display: block;
+}
