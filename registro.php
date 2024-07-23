@@ -1,4 +1,9 @@
 <?php
+session_start();
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
 function getParamValue($param) {
     return isset($_GET[$param]) ? htmlspecialchars($_GET[$param]) : '';
 }
@@ -41,12 +46,20 @@ function getParamValue($param) {
         .fa-x-twitter { color: #1F140F; }
         .fa-telegram { color: #0088cc; }
         .fa-globe { color: #000000; }
+        .img-preview {
+            max-width: 200px;
+            max-height: 200px;
+            margin-top: 10px;
+            border: 1px solid #ddd;
+            padding: 5px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h2>Registro</h2>
         <form id="registrationForm" action="process_registration.php" method="POST" enctype="multipart/form-data" onsubmit="return validateForm()">
+            <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
             <div id="step1" class="step active">
                 <h3>Datos Personales</h3>
                 <div class="form-group">
@@ -130,12 +143,14 @@ function getParamValue($param) {
                 <p>Solo se aceptan archivos en formato JPG y PNG.</p>
                 <div class="form-group">
                     <label for="foto_perfil">Foto de Perfil</label>
-                    <input type="file" class="form-control-file" id="foto_perfil" name="foto_perfil" accept="image/png, image/jpeg">
+                    <input type="file" class="form-control-file" id="foto_perfil" name="foto_perfil" accept="image/png, image/jpeg" onchange="previewImage('foto_perfil', 'preview_foto_perfil')">
+                    <img id="preview_foto_perfil" class="img-preview" src="#" alt="Vista previa de la foto de perfil" style="display: none;">
                     <div id="error-foto_perfil" class="error-message">Solo se aceptan archivos JPG y PNG.</div>
                 </div>
                 <div class="form-group">
                     <label for="logo">Logo</label>
-                    <input type="file" class="form-control-file" id="logo" name="logo" accept="image/png, image/jpeg">
+                    <input type="file" class="form-control-file" id="logo" name="logo" accept="image/png, image/jpeg" onchange="previewImage('logo', 'preview_logo')">
+                    <img id="preview_logo" class="img-preview" src="#" alt="Vista previa del logo" style="display: none;">
                     <div id="error-logo" class="error-message">Solo se aceptan archivos JPG y PNG.</div>
                 </div>
                 <button type="button" class="btn btn-secondary" onclick="previousStep(2)">Volver a Redes Sociales</button>
@@ -396,6 +411,26 @@ function getParamValue($param) {
 
             // Enviar el formulario
             $('#registrationForm').submit();
+        }
+
+        // Función para mostrar una vista previa de la imagen seleccionada
+        function previewImage(inputId, previewId) {
+            var input = document.getElementById(inputId);
+            var preview = document.getElementById(previewId);
+            var file = input.files[0];
+            var reader = new FileReader();
+
+            reader.onloadend = function() {
+                preview.src = reader.result;
+                preview.style.display = 'block';
+            };
+
+            if (file) {
+                reader.readAsDataURL(file);
+            } else {
+                preview.src = "";
+                preview.style.display = 'none';
+            }
         }
 
         $(document).ready(function() {

@@ -1,4 +1,5 @@
 <?php
+session_start();
 include 'database.php';
 
 // Función para generar una contraseña aleatoria
@@ -25,6 +26,11 @@ function redirectWithParams($params) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        header("Location: registro.php?error=csrf");
+        exit();
+    }
+
     $nombre = $_POST['nombre'];
     $apellido = $_POST['apellido'];
     $profesion = $_POST['profesion'];
