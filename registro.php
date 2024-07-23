@@ -1,3 +1,8 @@
+<?php
+function getParamValue($param) {
+    return isset($_GET[$param]) ? htmlspecialchars($_GET[$param]) : '';
+}
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -46,34 +51,34 @@
                 <h3>Datos Personales</h3>
                 <div class="form-group">
                     <label for="nombre" class="required-field">Nombre</label>
-                    <input type="text" class="form-control" id="nombre" name="nombre" required>
+                    <input type="text" class="form-control" id="nombre" name="nombre" value="<?php echo getParamValue('nombre'); ?>" required>
                     <div id="error-nombre" class="error-message">Este campo es obligatorio.</div>
                 </div>
                 <div class="form-group">
                     <label for="apellido" class="required-field">Apellido</label>
-                    <input type="text" class="form-control" id="apellido" name="apellido" required>
+                    <input type="text" class="form-control" id="apellido" name="apellido" value="<?php echo getParamValue('apellido'); ?>" required>
                     <div id="error-apellido" class="error-message">Este campo es obligatorio.</div>
                 </div>
                 <div class="form-group">
                     <label for="profesion">Profesión / Ocupación / Cargo</label>
-                    <input type="text" class="form-control" id="profesion" name="profesion">
+                    <input type="text" class="form-control" id="profesion" name="profesion" value="<?php echo getParamValue('profesion'); ?>">
                 </div>
                 <div class="form-group">
                     <label for="empresa">Nombre de tu Empresa</label>
-                    <input type="text" class="form-control" id="empresa" name="empresa">
+                    <input type="text" class="form-control" id="empresa" name="empresa" value="<?php echo getParamValue('empresa'); ?>">
                 </div>
                 <div class="form-group">
                     <label for="direccion">Dirección</label>
-                    <input type="text" class="form-control" id="direccion" name="direccion">
+                    <input type="text" class="form-control" id="direccion" name="direccion" value="<?php echo getParamValue('direccion'); ?>">
                 </div>
                 <div class="form-group">
                     <label for="telefono" class="required-field">Teléfono</label>
-                    <input type="tel" class="form-control" id="telefono" name="telefono" required>
+                    <input type="tel" class="form-control" id="telefono" name="telefono" value="<?php echo getParamValue('telefono'); ?>" required>
                     <div id="error-telefono" class="error-message">Este campo es obligatorio y debe contener solo números.</div>
                 </div>
                 <div class="form-group">
                     <label for="correo" class="required-field">Correo Electrónico</label>
-                    <input type="email" class="form-control" id="correo" name="correo" required>
+                    <input type="email" class="form-control" id="correo" name="correo" value="<?php echo getParamValue('correo'); ?>" required>
                     <div id="error-correo" class="error-message">Este campo es obligatorio y debe contener un '@'.</div>
                 </div>
                 <div id="step1Error" class="error-message">Por favor, complete todos los campos obligatorios.</div>
@@ -83,39 +88,39 @@
                 <h3>Redes Sociales</h3>
                 <div class="form-group">
                     <label for="whatsapp"><i class="fab fa-whatsapp icon-color"></i> WhatsApp</label>
-                    <input type="text" class="form-control" id="whatsapp" name="whatsapp">
+                    <input type="text" class="form-control" id="whatsapp" name="whatsapp" value="<?php echo getParamValue('whatsapp'); ?>">
                 </div>
                 <div class="form-group">
                     <label for="facebook"><i class="fab fa-facebook icon-color"></i> Facebook</label>
-                    <input type="text" class="form-control" id="facebook" name="facebook">
+                    <input type="text" class="form-control" id="facebook" name="facebook" value="<?php echo getParamValue('facebook'); ?>">
                 </div>
                 <div class="form-group">
                     <label for="tiktok"><i class="fab fa-tiktok icon-color"></i> TikTok</label>
-                    <input type="text" class="form-control" id="tiktok" name="tiktok">
+                    <input type="text" class="form-control" id="tiktok" name="tiktok" value="<?php echo getParamValue('tiktok'); ?>">
                 </div>
                 <div class="form-group">
                     <label for="instagram"><i class="fab fa-instagram icon-color"></i> Instagram</label>
-                    <input type="text" class="form-control" id="instagram" name="instagram">
+                    <input type="text" class="form-control" id="instagram" name="instagram" value="<?php echo getParamValue('instagram'); ?>">
                 </div>
                 <div class="form-group">
                     <label for="youtube"><i class="fab fa-youtube icon-color"></i> YouTube</label>
-                    <input type="text" class="form-control" id="youtube" name="youtube">
+                    <input type="text" class="form-control" id="youtube" name="youtube" value="<?php echo getParamValue('youtube'); ?>">
                 </div>
                 <div class="form-group">
                     <label for="linkedin"><i class="fab fa-linkedin icon-color"></i> LinkedIn</label>
-                    <input type="text" class="form-control" id="linkedin" name="linkedin">
+                    <input type="text" class="form-control" id="linkedin" name="linkedin" value="<?php echo getParamValue('linkedin'); ?>">
                 </div>
                 <div class="form-group">
                     <label for="twitter"><i class="fab fa-x-twitter icon-color"></i> Twitter</label>
-                    <input type="text" class="form-control" id="twitter" name="twitter">
+                    <input type="text" class="form-control" id="twitter" name="twitter" value="<?php echo getParamValue('twitter'); ?>">
                 </div>
                 <div class="form-group">
                     <label for="telegram"><i class="fab fa-telegram icon-color"></i> Telegram</label>
-                    <input type="text" class="form-control" id="telegram" name="telegram">
+                    <input type="text" class="form-control" id="telegram" name="telegram" value="<?php echo getParamValue('telegram'); ?>">
                 </div>
                 <div class="form-group">
                     <label for="pagina_web"><i class="fas fa-globe icon-color"></i> Página Web</label>
-                    <input type="text" class="form-control" id="pagina_web" name="pagina_web">
+                    <input type="text" class="form-control" id="pagina_web" name="pagina_web" value="<?php echo getParamValue('pagina_web'); ?>">
                 </div>
                 <button type="button" class="btn btn-secondary" onclick="previousStep(1)">Volver a Datos Personales</button>
                 <button type="button" class="btn btn-primary" onclick="nextStep(3)">Siguiente</button>
@@ -145,7 +150,7 @@
                         for ($i = 1; $i <= 6; $i++) {
                             echo '<div class="col-md-4">
                                     <label>
-                                        <input type="radio" name="modelo" value="modelo'.$i.'.jpg" required>
+                                        <input type="radio" name="modelo" value="modelo'.$i.'.jpg" ' . (getParamValue('modelo') == 'modelo'.$i.'.jpg' ? 'checked' : '') . ' required>
                                         <img src="assets/images/modelo'.$i.'.jpg" class="img-fluid">
                                     </label>
                                   </div>';
@@ -159,7 +164,7 @@
         </form>
     </div>
 
-    <!-- Modal -->
+    <!-- Modal para formato de archivo incorrecto -->
     <div class="modal fade" id="fileFormatModal" tabindex="-1" aria-labelledby="fileFormatModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -179,6 +184,7 @@
         </div>
     </div>
 
+    <!-- Modal para correo ya registrado -->
     <div class="modal fade" id="emailExistsModal" tabindex="-1" aria-labelledby="emailExistsModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -193,6 +199,46 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-whatsapp" onclick="redirectToWhatsApp()">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para formato de correo incorrecto -->
+    <div class="modal fade" id="emailFormatModal" tabindex="-1" aria-labelledby="emailFormatModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="emailFormatModalLabel">Formato de correo no válido</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    El correo electrónico ingresado no tiene un formato válido. Por favor, ingrese un correo electrónico válido.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para dominio de correo no válido -->
+    <div class="modal fade" id="emailDomainModal" tabindex="-1" aria-labelledby="emailDomainModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="emailDomainModalLabel">Dominio de correo no válido</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    El dominio del correo electrónico ingresado no existe. Por favor, ingrese un correo electrónico con un dominio válido.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Aceptar</button>
                 </div>
             </div>
         </div>
@@ -290,6 +336,16 @@
             $('#emailExistsModal').modal('show');
         }
 
+        // Función para mostrar el modal de formato de correo incorrecto
+        function showEmailFormatModal() {
+            $('#emailFormatModal').modal('show');
+        }
+
+        // Función para mostrar el modal de dominio de correo no válido
+        function showEmailDomainModal() {
+            $('#emailDomainModal').modal('show');
+        }
+
         // Función para redirigir a WhatsApp
         function redirectToWhatsApp() {
             window.location.href = 'https://wa.me/51962171195';
@@ -324,8 +380,6 @@
                 return false;
             }
 
-            // Añadir validación de otros pasos si es necesario
-
             return valid;
         }
 
@@ -346,8 +400,17 @@
 
         $(document).ready(function() {
             const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.has('error') && urlParams.get('error') == '1') {
-                showEmailExistsModal();
+            if (urlParams.has('error')) {
+                const error = urlParams.get('error');
+                if (error == 'email_format') {
+                    showEmailFormatModal();
+                } else if (error == 'email_domain') {
+                    showEmailDomainModal();
+                } else if (error == '1') {
+                    showEmailExistsModal();
+                } else if (error == '2') {
+                    showFileFormatModal();
+                }
             }
 
             var input = document.querySelector("#telefono");
