@@ -53,15 +53,80 @@ function getParamValue($param) {
             border: 1px solid #ddd;
             padding: 5px;
         }
+        .stepper {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 8px;
+        }
+        .stepper .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            flex: 1;
+        }
+        .stepper .step:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: -50%;
+            width: 100%;
+            height: 2px;
+            background-color: #ccc;
+            z-index: -1;
+        }
+        .stepper .step .circle {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #ccc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .stepper .step.active .circle {
+            background-color: #28a745;
+        }
+        .stepper .step .label {
+            font-size: 14px;
+            font-weight: bold;
+            display: none;
+        }
+        .stepper .step.active .label {
+            display: block;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h2>Registro</h2>
+        <div class="stepper">
+            <div class="step active" id="step1Indicator">
+                <div class="circle">1</div>
+                <div class="label">Datos Personales</div>
+            </div>
+            <div class="step" id="step2Indicator">
+                <div class="circle">2</div>
+                <div class="label">Redes Sociales</div>
+            </div>
+            <div class="step" id="step3Indicator">
+                <div class="circle">3</div>
+                <div class="label">Multimedia</div>
+            </div>
+            <div class="step" id="step4Indicator">
+                <div class="circle">4</div>
+                <div class="label">Escoger Modelo</div>
+            </div>
+        </div>
         <form id="registrationForm" action="process_registration.php" method="POST" enctype="multipart/form-data" onsubmit="return validateForm()">
             <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
-            <div id="step1" class="step active">
-                <h3>Datos Personales</h3>
+            <div id="step1" class="step-content active">
                 <div class="form-group">
                     <label for="nombre" class="required-field">Nombre</label>
                     <input type="text" class="form-control" id="nombre" name="nombre" value="<?php echo getParamValue('nombre'); ?>" required>
@@ -97,8 +162,7 @@ function getParamValue($param) {
                 <div id="step1Error" class="error-message">Por favor, complete todos los campos obligatorios.</div>
                 <button type="button" class="btn btn-primary" onclick="validateStep1()">Siguiente</button>
             </div>
-            <div id="step2" class="step" style="display: none;">
-                <h3>Redes Sociales</h3>
+            <div id="step2" class="step-content" style="display: none;">
                 <div class="form-group">
                     <label for="whatsapp"><i class="fab fa-whatsapp icon-color"></i> WhatsApp</label>
                     <input type="text" class="form-control" id="whatsapp" name="whatsapp" value="<?php echo getParamValue('whatsapp'); ?>">
@@ -136,11 +200,9 @@ function getParamValue($param) {
                     <input type="text" class="form-control" id="pagina_web" name="pagina_web" value="<?php echo getParamValue('pagina_web'); ?>">
                 </div>
                 <button type="button" class="btn btn-secondary" onclick="previousStep(1)">Volver a Datos Personales</button>
-                <button type="button" class="btn btn-primary" onclick="nextStep(3)">Siguiente</button>
+                <button type="button" class="btn btn-primary" onclick="validateStep2()">Siguiente</button>
             </div>
-            <div id="step3" class="step" style="display: none;">
-                <h3>Multimedia</h3>
-                <p>Solo se aceptan archivos en formato JPG y PNG.</p>
+            <div id="step3" class="step-content" style="display: none;">
                 <div class="form-group">
                     <label for="foto_perfil">Foto de Perfil</label>
                     <input type="file" class="form-control-file" id="foto_perfil" name="foto_perfil" accept="image/png, image/jpeg" onchange="previewImage('foto_perfil', 'preview_foto_perfil')">
@@ -156,8 +218,7 @@ function getParamValue($param) {
                 <button type="button" class="btn btn-secondary" onclick="previousStep(2)">Volver a Redes Sociales</button>
                 <button type="button" class="btn btn-primary" onclick="validateStep3()">Siguiente</button>
             </div>
-            <div id="step4" class="step" style="display: none;">
-                <h3>Escoger Modelo</h3>
+            <div id="step4" class="step-content" style="display: none;">
                 <div class="form-group">
                     <label for="modelo">Elige un modelo:</label>
                     <div class="row">
@@ -296,6 +357,11 @@ function getParamValue($param) {
             }
         }
 
+        // Función para validar el segundo paso del formulario
+        function validateStep2() {
+            nextStep(3);
+        }
+
         // Función para validar el tercer paso del formulario
         function validateStep3() {
             var valid = true;
@@ -331,14 +397,18 @@ function getParamValue($param) {
 
         // Función para avanzar al siguiente paso del formulario
         function nextStep(step) {
-            $('.step').hide();
+            $('.step-content').hide();
             $('#step' + step).show();
+            $('.step').removeClass('active');
+            $('#step' + step + 'Indicator').addClass('active');
         }
 
         // Función para retroceder al paso anterior del formulario
         function previousStep(step) {
-            $('.step').hide();
+            $('.step-content').hide();
             $('#step' + step).show();
+            $('.step').removeClass('active');
+            $('#step' + step + 'Indicator').addClass('active');
         }
 
         // Función para mostrar el modal de formato de archivo incorrecto
