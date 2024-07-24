@@ -320,6 +320,26 @@ function getParamValue($param) {
         </div>
     </div>
 
+    <!-- Modal para éxito en el registro -->
+    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="successModalLabel">Registro Exitoso</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    ¡Registro completado con éxito! Revisa tu correo para más detalles.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="successModalButton">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -431,6 +451,11 @@ function getParamValue($param) {
             $('#emailDomainModal').modal('show');
         }
 
+        // Función para mostrar el modal de éxito
+        function showSuccessModal() {
+            $('#successModal').modal('show');
+        }
+
         // Función para redirigir a WhatsApp
         function redirectToWhatsApp() {
             window.location.href = 'https://wa.me/51962171195';
@@ -517,6 +542,14 @@ function getParamValue($param) {
                     showFileFormatModal();
                 }
             }
+
+            if (urlParams.has('status') && urlParams.get('status') === 'success') {
+                showSuccessModal();
+            }
+
+            $('#successModalButton').on('click', function() {
+                window.location.href = 'login.php';
+            });
 
             var input = document.querySelector("#telefono");
             iti = window.intlTelInput(input, {

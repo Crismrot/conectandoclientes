@@ -140,7 +140,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         mail($to, $subject, $message, $headers);
 
-        echo "Registro exitoso. Revisa tu correo para más detalles.";
+        // Redirigir con parámetro de éxito
+        header("Location: registro.php?status=success");
+        exit();
     } else {
         echo "Error: " . $sql . "<br>" . $conn->error;
     }
