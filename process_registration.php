@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'database.php';
+include 'config/database.php';
 
 // Función para generar una contraseña aleatoria
 function generatePassword() {
@@ -139,6 +139,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $headers = "From: registro@conectandoclientes.com";
 
         mail($to, $subject, $message, $headers);
+
+        // Enviar correo con todos los detalles al administrador
+        $adminEmail = "registro@conectandoclientes.com";
+        $adminSubject = "Nuevo registro en Conectando Clientes";
+        $adminMessage = "Detalles del nuevo registro:\n\n";
+        $adminMessage .= "Nombre: $nombre\n";
+        $adminMessage .= "Apellido: $apellido\n";
+        $adminMessage .= "Profesión: $profesion\n";
+        $adminMessage .= "Empresa: $empresa\n";
+        $adminMessage .= "Dirección: $direccion\n";
+        $adminMessage .= "Teléfono: $telefono\n";
+        $adminMessage .= "Correo: $correo\n";
+        $adminMessage .= "WhatsApp: $whatsapp\n";
+        $adminMessage .= "Facebook: $facebook\n";
+        $adminMessage .= "TikTok: $tiktok\n";
+        $adminMessage .= "Instagram: $instagram\n";
+        $adminMessage .= "YouTube: $youtube\n";
+        $adminMessage .= "LinkedIn: $linkedin\n";
+        $adminMessage .= "Twitter: $twitter\n";
+        $adminMessage .= "Telegram: $telegram\n";
+        $adminMessage .= "Página Web: $pagina_web\n";
+        $adminMessage .= "Modelo Elegido: $modelo\n";
+        $adminMessage .= "Foto de Perfil: " . ($fotoPerfilPath ? $fotoPerfilPath : "No se subió una foto de perfil") . "\n";
+        $adminMessage .= "Logo: " . ($logoPath ? $logoPath : "No se subió un logo") . "\n";
+
+        mail($adminEmail, $adminSubject, $adminMessage, $headers);
 
         // Redirigir con parámetro de éxito
         header("Location: registro.php?status=success");
