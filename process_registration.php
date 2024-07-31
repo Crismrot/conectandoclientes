@@ -1,6 +1,11 @@
 <?php
 session_start();
 include 'config/database.php';
+require __DIR__ . '/vendor/autoload.php';
+
+use Endroid\QrCode\QrCode;
+use Endroid\QrCode\Writer\PngWriter;
+use Endroid\QrCode\Writer\SvgWriter;
 
 // Función para generar una contraseña aleatoria
 function generatePassword() {
@@ -126,48 +131,62 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $logoPath = null;
     }
 
+    // Generar URL única para el perfil
+    $urlPerfil = strtolower($nombre . $apellido . $fechaHora);
+
     $clave = generatePassword();
     $claveHash = password_hash($clave, PASSWORD_BCRYPT);
 
-    $sql = "INSERT INTO usuarios (nombre, apellido, profesion, empresa, direccion, telefono, correo, whatsapp, facebook, tiktok, instagram, youtube, linkedin, twitter, telegram, pagina_web, foto_perfil, logo, modelo_elegido, clave)
-            VALUES ('$nombre', '$apellido', '$profesion', '$empresa', '$direccion', '$telefono', '$correo', '$whatsapp', '$facebook', '$tiktok', '$instagram', '$youtube', '$linkedin', '$twitter', '$telegram', '$pagina_web', '$fotoPerfilPath', '$logoPath', '$modelo', '$claveHash')";
+    $sql = "INSERT INTO usuarios (nombre, apellido, profesion, empresa, direccion, telefono, correo, whatsapp, facebook, tiktok, instagram, youtube, linkedin, twitter, telegram, pagina_web, foto_perfil, logo, modelo_elegido, clave, url_perfil)
+            VALUES ('$nombre', '$apellido', '$profesion', '$empresa', '$direccion', '$telefono', '$correo', '$whatsapp', '$facebook', '$tiktok', '$instagram', '$youtube', '$linkedin', '$twitter', '$telegram', '$pagina_web', '$fotoPerfilPath', '$logoPath', '$modelo', '$claveHash', '$urlPerfil')";
 
     if ($conn->query($sql) === TRUE) {
+        // Generar el código QR
+        $qrCode = new QrCode("http://localhost/app/perfiles/$urlPerfil");
+        $writer = new SvgWriter();
+        $qrCode->setSize(300);
+
+        // Guardar el código QR como SVG
+        $qrFileName = "assets/qrcodes/qr_" . strtolower($nombre . "_" . $apellido . "_" . $fechaHora) . ".svg";
+        $qrSvg = $writer->write($qrCode)->getString();
+        file_put_contents($qrFileName, $qrSvg);
+
+        // Enviar correo al usuario
         $to = $correo;
         $subject = "Registro exitoso - Conectando Clientes";
-        $message = "Hola $nombre,\n\nGracias por registrarte en Conectando Clientes. Aquí están tus detalles de acceso:\n\nCorreo: $correo\nClave: $clave\n\nSaludos,\nEl equipo de Conectando Clientes";
+        $message = "Hola $nombre,\n\nGracias por registrarte en Conectando Clientes. Aquí están tus detalles de acceso:\n\nCorreo: $correo\nClave: $clave\n\nPuedes acceder a tu perfil en el siguiente enlace:\nhttp://localhost/app/perfiles/$urlPerfil\n\nAdemás, adjuntamos un código QR con el enlace a tu perfil.\n\nSaludos,\nEl equipo de Conectando Clientes";
         $headers = "From: registro@conectandoclientes.com";
 
-        mail($to, $subject, $message, $headers);
+        // Adjuntar el código QR
+        $filePath = realpath($qrFileName);
+        $content = file_get_contents($filePath);
+        $content = chunk_split(base64_encode($content));
+        $uid = md5(uniqid(time()));
+        $filename = basename($filePath);
 
-        // Enviar correo con todos los detalles al administrador
+        $boundary = "----=" . md5(uniqid(mt_rand()));
+        $headers .= "\r\nMIME-Version: 1.0\r\nContent-Type: multipart/mixed; boundary=\"$boundary\"";
+        $messageBody = "--$boundary\r\n";
+        $messageBody .= "Content-Type: text/plain; charset=\"UTF-8\"\r\n";
+        $messageBody .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
+        $messageBody .= $message . "\r\n";
+        $messageBody .= "--$boundary\r\n";
+        $messageBody .= "Content-Type: image/svg+xml; name=\"$filename\"\r\n";
+        $messageBody .= "Content-Transfer-Encoding: base64\r\n";
+        $messageBody .= "Content-Disposition: attachment; filename=\"$filename\"\r\n\r\n";
+        $messageBody .= $content . "\r\n";
+        $messageBody .= "--$boundary--";
+
+        mail($to, $subject, $messageBody, $headers);
+
+        // Enviar correo al administrador con los datos del usuario y el QR
         $adminEmail = "registro@conectandoclientes.com";
-        $adminSubject = "Nuevo registro en Conectando Clientes";
-        $adminMessage = "Detalles del nuevo registro:\n\n";
-        $adminMessage .= "Nombre: $nombre\n";
-        $adminMessage .= "Apellido: $apellido\n";
-        $adminMessage .= "Profesión: $profesion\n";
-        $adminMessage .= "Empresa: $empresa\n";
-        $adminMessage .= "Dirección: $direccion\n";
-        $adminMessage .= "Teléfono: $telefono\n";
-        $adminMessage .= "Correo: $correo\n";
-        $adminMessage .= "WhatsApp: $whatsapp\n";
-        $adminMessage .= "Facebook: $facebook\n";
-        $adminMessage .= "TikTok: $tiktok\n";
-        $adminMessage .= "Instagram: $instagram\n";
-        $adminMessage .= "YouTube: $youtube\n";
-        $adminMessage .= "LinkedIn: $linkedin\n";
-        $adminMessage .= "Twitter: $twitter\n";
-        $adminMessage .= "Telegram: $telegram\n";
-        $adminMessage .= "Página Web: $pagina_web\n";
-        $adminMessage .= "Modelo Elegido: $modelo\n";
-        $adminMessage .= "Foto de Perfil: " . ($fotoPerfilPath ? $fotoPerfilPath : "No se subió una foto de perfil") . "\n";
-        $adminMessage .= "Logo: " . ($logoPath ? $logoPath : "No se subió un logo") . "\n";
+        $subjectAdmin = "Nuevo usuario registrado: $nombre $apellido";
+        $messageAdmin = "Se ha registrado un nuevo usuario con los siguientes datos:\n\nNombre: $nombre $apellido\nCorreo: $correo\nTeléfono: $telefono\nURL del perfil: http://localhost/app/perfiles/$urlPerfil\n";
 
-        mail($adminEmail, $adminSubject, $adminMessage, $headers);
+        mail($adminEmail, $subjectAdmin, $messageBody, $headers);
 
-        // Redirigir con parámetro de éxito
-        header("Location: registro.php?status=success");
+        header("Location: registro.php?success=1");
         exit();
     } else {
         echo "Error: " . $sql . "<br>" . $conn->error;

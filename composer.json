@@ -1,0 +1,15 @@
+{
+    "name": "conectando/clientes",
+    "description": "Registro y perfil de usuarios para Conectando Clientes.",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Cristopher Rodriguez",
+            "email": "crodriguez@diginperu.com"
+        }
+    ],
+    "require": {
+        "tecnickcom/tcpdf": "^6.7",
+        "endroid/qr-code": "^5.0"
+    }
+}

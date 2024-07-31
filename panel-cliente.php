@@ -24,6 +24,13 @@ $stmt->close();
     <title>Panel de Usuario - Conectando Clientes</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        .container {
+            margin-top: 50px;
+        }
         .panel-heading {
             margin-bottom: 20px;
         }
@@ -32,13 +39,33 @@ $stmt->close();
         }
         .option-card {
             transition: all 0.3s ease;
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
         .option-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
         }
         .card-body p {
             margin-bottom: 10px;
+        }
+        .btn-primary {
+            background-color: #d9534f;
+            border: none;
+        }
+        .btn-warning {
+            background-color: #f0ad4e;
+            border: none;
+        }
+        .btn-danger {
+            background-color: #d9534f;
+            border: none;
+        }
+        .btn-primary:hover,
+        .btn-warning:hover,
+        .btn-danger:hover {
+            opacity: 0.9;
         }
     </style>
 </head>
@@ -63,7 +90,7 @@ $stmt->close();
                     <div class="card-body text-center">
                         <h4 class="card-title">Cambiar Contraseña</h4>
                         <p class="card-text">Cambia tu contraseña para mejorar la seguridad.</p>
-                        <a href="cambiar_clave.php" class="btn btn-warning">Cambiar Contraseña</a>
+                        <a href="cambiar_clave_panel.php" class="btn btn-warning">Cambiar Contraseña</a>
                     </div>
                 </div>
             </div>
