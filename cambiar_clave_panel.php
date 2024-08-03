@@ -16,52 +16,57 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $nuevaClave = $_POST['nueva_clave'];
     $nuevaClaveConfirmacion = $_POST['nueva_clave_confirmacion'];
 
-    // Obtener la clave actual del usuario desde la base de datos
-    $stmt = $conn->prepare("SELECT clave FROM usuarios WHERE id = ?");
-    $stmt->bind_param("i", $_SESSION['user_id']);
-    $stmt->execute();
-    $stmt->bind_result($claveHashActual);
-    $stmt->fetch();
-    $stmt->close();
-
-    // Verificar la clave actual
-    if (!password_verify($claveActual, $claveHashActual)) {
-        $error = "La clave actual es incorrecta.";
+    // Validar las entradas del usuario
+    if (empty($claveActual) || empty($nuevaClave) || empty($nuevaClaveConfirmacion)) {
+        $error = "Todos los campos son obligatorios.";
     } elseif ($nuevaClave !== $nuevaClaveConfirmacion) {
         $error = "Las claves nuevas no coinciden.";
     } elseif (strlen($nuevaClave) < 8) {
         $error = "La nueva clave debe tener al menos 8 caracteres.";
     } else {
-        // Encriptar la nueva clave
-        $claveHash = password_hash($nuevaClave, PASSWORD_BCRYPT);
-        $stmt = $conn->prepare("UPDATE usuarios SET clave = ? WHERE id = ?");
-        $stmt->bind_param("si", $claveHash, $_SESSION['user_id']);
-        $stmt->execute();
-        $stmt->close();
-
-        // Obtener detalles del usuario para el correo
-        $stmt = $conn->prepare("SELECT correo, nombre FROM usuarios WHERE id = ?");
+        // Obtener la clave actual del usuario desde la base de datos
+        $stmt = $conn->prepare("SELECT clave FROM usuarios WHERE id = ?");
         $stmt->bind_param("i", $_SESSION['user_id']);
         $stmt->execute();
-        $stmt->bind_result($correoUsuario, $nombreUsuario);
+        $stmt->bind_result($claveHashActual);
         $stmt->fetch();
         $stmt->close();
 
-        // Enviar correo al usuario
-        $subjectUsuario = "Cambio de clave - Conectando Clientes";
-        $messageUsuario = "Hola $nombreUsuario,\n\nTu clave ha sido cambiada exitosamente. Si no solicitaste este cambio, por favor contacta con soporte inmediatamente.\n\nSaludos,\nEl equipo de Conectando Clientes";
-        $headers = "From: soporte@conectandoclientes.com";
+        // Verificar la clave actual
+        if (!password_verify($claveActual, $claveHashActual)) {
+            $error = "La clave actual es incorrecta.";
+        } else {
+            // Encriptar la nueva clave
+            $claveHash = password_hash($nuevaClave, PASSWORD_BCRYPT);
+            $stmt = $conn->prepare("UPDATE usuarios SET clave = ? WHERE id = ?");
+            $stmt->bind_param("si", $claveHash, $_SESSION['user_id']);
+            $stmt->execute();
+            $stmt->close();
 
-        mail($correoUsuario, $subjectUsuario, $messageUsuario, $headers);
+            // Obtener detalles del usuario para el correo
+            $stmt = $conn->prepare("SELECT correo, nombre FROM usuarios WHERE id = ?");
+            $stmt->bind_param("i", $_SESSION['user_id']);
+            $stmt->execute();
+            $stmt->bind_result($correoUsuario, $nombreUsuario);
+            $stmt->fetch();
+            $stmt->close();
 
-        // Enviar correo al administrador
-        $adminEmail = "registro@conectandoclientes.com";
-        $subjectAdmin = "Cambio de clave del usuario $nombreUsuario";
-        $messageAdmin = "El usuario $nombreUsuario (Correo: $correoUsuario) ha cambiado su clave.";
-        mail($adminEmail, $subjectAdmin, $messageAdmin, $headers);
+            // Enviar correo al usuario
+            $subjectUsuario = "Cambio de clave - Conectando Clientes";
+            $messageUsuario = "Hola $nombreUsuario,\n\nTu clave ha sido cambiada exitosamente. Si no solicitaste este cambio, por favor contacta con soporte inmediatamente.\n\nSaludos,\nEl equipo de Conectando Clientes";
+            $headers = "From: soporte@conectandoclientes.com";
 
-        // Marcar como éxito para mostrar el modal
-        $success = true;
+            mail($correoUsuario, $subjectUsuario, $messageUsuario, $headers);
+
+            // Enviar correo al administrador
+            $adminEmail = "registro@conectandoclientes.com";
+            $subjectAdmin = "Cambio de clave del usuario $nombreUsuario";
+            $messageAdmin = "El usuario $nombreUsuario (Correo: $correoUsuario) ha cambiado su clave.";
+            mail($adminEmail, $subjectAdmin, $messageAdmin, $headers);
+
+            // Marcar como éxito para mostrar el modal
+            $success = true;
+        }
     }
 }
 ?>

@@ -5,7 +5,7 @@ if (empty($_SESSION['csrf_token'])) {
 }
 
 function getParamValue($param) {
-    return isset($_GET[$param]) ? htmlspecialchars($_GET[$param]) : '';
+    return isset($_GET[$param]) ? htmlspecialchars($_GET[$param], ENT_QUOTES, 'UTF-8') : '';
 }
 ?>
 <!DOCTYPE html>
@@ -130,11 +130,13 @@ function getParamValue($param) {
                 <div class="form-group">
                     <label for="nombre" class="required-field">Nombre</label>
                     <input type="text" class="form-control" id="nombre" name="nombre" value="<?php echo getParamValue('nombre'); ?>" required>
+                    <small class="form-text text-muted">Ingresa tu primer nombre.</small>
                     <div id="error-nombre" class="error-message">Este campo es obligatorio.</div>
                 </div>
                 <div class="form-group">
                     <label for="apellido" class="required-field">Apellido</label>
                     <input type="text" class="form-control" id="apellido" name="apellido" value="<?php echo getParamValue('apellido'); ?>" required>
+                    <small class="form-text text-muted">Ingresa tu apellido paterno.</small>
                     <div id="error-apellido" class="error-message">Este campo es obligatorio.</div>
                 </div>
                 <div class="form-group">
@@ -157,6 +159,7 @@ function getParamValue($param) {
                 <div class="form-group">
                     <label for="correo" class="required-field">Correo Electrónico</label>
                     <input type="email" class="form-control" id="correo" name="correo" value="<?php echo getParamValue('correo'); ?>" required>
+                    <small class="form-text text-muted">Este correo será tu usuario de inicio de sesión.</small>
                     <div id="error-correo" class="error-message">Este campo es obligatorio y debe contener un '@'.</div>
                 </div>
                 <div id="step1Error" class="error-message">Por favor, complete todos los campos obligatorios.</div>

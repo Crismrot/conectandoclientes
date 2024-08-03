@@ -1,7 +1,7 @@
 <?php
 include 'config/database.php'; // Asegúrate de que este archivo incluye la conexión a la base de datos
 
-$usuario = $_GET['usuario'] ?? '';
+$usuario = htmlspecialchars($_GET['usuario'] ?? '', ENT_QUOTES, 'UTF-8');
 
 // Buscar el usuario en la base de datos usando la URL de perfil
 $stmt = $conn->prepare("SELECT nombre, apellido, profesion, empresa, direccion, telefono, correo, whatsapp, facebook, tiktok, instagram, youtube, linkedin, twitter, telegram, pagina_web, foto_perfil, logo FROM usuarios WHERE url_perfil = ?");
@@ -18,10 +18,9 @@ if ($stmt->num_rows > 0) {
 }
 
 // Asegurar que las rutas de las imágenes sean correctas
-$foto_perfil = '../assets/uploads/' . basename($foto_perfil);
-$logo = '../assets/uploads/' . basename($logo);
+$foto_perfil = !empty($foto_perfil) ? '../assets/uploads/' . basename($foto_perfil) : null;
+$logo = !empty($logo) ? '../assets/uploads/' . basename($logo) : null;
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -143,7 +142,9 @@ $logo = '../assets/uploads/' . basename($logo);
 <body>
     <div class="container">
         <div class="profile-header text-center">
-            <img src="<?php echo htmlspecialchars($foto_perfil); ?>" alt="Foto de perfil" class="img-thumbnail">
+            <?php if ($foto_perfil): ?>
+                <img src="<?php echo htmlspecialchars($foto_perfil); ?>" alt="Foto de perfil" class="img-thumbnail">
+            <?php endif; ?>
             <h1><?php echo htmlspecialchars("$nombre $apellido"); ?></h1>
             <p class="profession"><?php echo htmlspecialchars($profesion); ?></p>
             <?php if (!empty($empresa)) { ?>
@@ -192,24 +193,24 @@ $logo = '../assets/uploads/' . basename($logo);
             <?php if (!empty($whatsapp) || !empty($facebook) || !empty($tiktok) || !empty($instagram) || !empty($youtube) || !empty($linkedin) || !empty($twitter) || !empty($telegram)) { ?>
             <div class="row">
                 <div class="col-md-9 offset-md-3 social-buttons">
-                    <?php if (!empty($facebook)) { echo "<a href='$facebook' class='btn btn-primary'><i class='fab fa-facebook'></i> <span>Facebook</span></a>"; } ?>
-                    <?php if (!empty($tiktok)) { echo "<a href='$tiktok' class='btn btn-dark'><i class='fab fa-tiktok'></i> <span>TikTok</span></a>"; } ?>
-                    <?php if (!empty($instagram)) { echo "<a href='$instagram' class='btn btn-danger'><i class='fab fa-instagram'></i> <span>Instagram</span></a>"; } ?>
-                    <?php if (!empty($youtube)) { echo "<a href='$youtube' class='btn btn-danger'><i class='fab fa-youtube'></i> <span>YouTube</span></a>"; } ?>
-                    <?php if (!empty($linkedin)) { echo "<a href='$linkedin' class='btn btn-info'><i class='fab fa-linkedin'></i> <span>LinkedIn</span></a>"; } ?>
-                    <?php if (!empty($twitter)) { echo "<a href='$twitter' class='btn btn-dark'><i class='fab fa-x-twitter'></i> <span>Twitter</span></a>"; } ?>
-                    <?php if (!empty($telegram)) { echo "<a href='$telegram' class='btn btn-primary'><i class='fab fa-telegram'></i> <span>Telegram</span></a>"; } ?>
+                    <?php if (!empty($facebook)) { echo "<a href='". htmlspecialchars($facebook) ."' class='btn btn-primary'><i class='fab fa-facebook'></i> <span>Facebook</span></a>"; } ?>
+                    <?php if (!empty($tiktok)) { echo "<a href='". htmlspecialchars($tiktok) ."' class='btn btn-dark'><i class='fab fa-tiktok'></i> <span>TikTok</span></a>"; } ?>
+                    <?php if (!empty($instagram)) { echo "<a href='". htmlspecialchars($instagram) ."' class='btn btn-danger'><i class='fab fa-instagram'></i> <span>Instagram</span></a>"; } ?>
+                    <?php if (!empty($youtube)) { echo "<a href='". htmlspecialchars($youtube) ."' class='btn btn-danger'><i class='fab fa-youtube'></i> <span>YouTube</span></a>"; } ?>
+                    <?php if (!empty($linkedin)) { echo "<a href='". htmlspecialchars($linkedin) ."' class='btn btn-info'><i class='fab fa-linkedin'></i> <span>LinkedIn</span></a>"; } ?>
+                    <?php if (!empty($twitter)) { echo "<a href='". htmlspecialchars($twitter) ."' class='btn btn-dark'><i class='fab fa-x-twitter'></i> <span>Twitter</span></a>"; } ?>
+                    <?php if (!empty($telegram)) { echo "<a href='". htmlspecialchars($telegram) ."' class='btn btn-primary'><i class='fab fa-telegram'></i> <span>Telegram</span></a>"; } ?>
                 </div>
             </div>
             <?php } ?>
 
-            <?php if (!empty($logo)) { ?>
+            <?php if ($logo): ?>
             <div class="row logo">
                 <div class="col-md-9 offset-md-3">
                     <img src="<?php echo htmlspecialchars($logo); ?>" alt="Logo de la empresa">
                 </div>
             </div>
-            <?php } ?>
+            <?php endif; ?>
         </div>
     </div>
     <?php if (!empty($whatsapp)) { ?>

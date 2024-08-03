@@ -17,6 +17,7 @@ $stmt->fetch();
 $stmt->close();
 
 $success = false;
+$error = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $nombre = $_POST['nombre'];
@@ -50,44 +51,49 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->close();
     }
 
-    if (!isset($error)) {
+    if (empty($error)) {
         // Manejar la subida de nuevas imágenes
         $allowedExtensions = ['jpg', 'jpeg', 'png'];
+        $fechaHora = date('YmdHis');
 
         if (!empty($_FILES['foto_perfil']['name'])) {
             $fotoPerfilExtension = pathinfo($_FILES['foto_perfil']['name'], PATHINFO_EXTENSION);
-            if (in_array($fotoPerfilExtension, $allowedExtensions)) {
+            if (in_array(strtolower($fotoPerfilExtension), $allowedExtensions)) {
                 // Eliminar la imagen de perfil anterior si existe
                 if ($fotoPerfilPath && file_exists($fotoPerfilPath)) {
                     unlink($fotoPerfilPath);
                 }
-                $fechaHora = date('YmdHis');
                 $fotoPerfilPath = "assets/uploads/perfil_" . str_replace('@', '', str_replace('.', '', $correo)) . "_" . $fechaHora . "." . $fotoPerfilExtension;
                 move_uploaded_file($_FILES['foto_perfil']['tmp_name'], $fotoPerfilPath);
+            } else {
+                $error = "Formato de imagen no permitido para la foto de perfil.";
             }
         }
 
         if (!empty($_FILES['logo']['name'])) {
             $logoExtension = pathinfo($_FILES['logo']['name'], PATHINFO_EXTENSION);
-            if (in_array($logoExtension, $allowedExtensions)) {
+            if (in_array(strtolower($logoExtension), $allowedExtensions)) {
                 // Eliminar el logo anterior si existe
                 if ($logoPath && file_exists($logoPath)) {
                     unlink($logoPath);
                 }
-                $fechaHora = date('YmdHis');
                 $logoPath = "assets/uploads/logo_" . str_replace('@', '', str_replace('.', '', $correo)) . "_" . $fechaHora . "." . $logoExtension;
                 move_uploaded_file($_FILES['logo']['tmp_name'], $logoPath);
+            } else {
+                $error = "Formato de imagen no permitido para el logo.";
             }
         }
 
-        // Actualizar los datos del usuario en la base de datos
-        $stmt = $conn->prepare("UPDATE usuarios SET nombre = ?, apellido = ?, profesion = ?, empresa = ?, direccion = ?, telefono = ?, correo = ?, whatsapp = ?, facebook = ?, tiktok = ?, instagram = ?, youtube = ?, linkedin = ?, twitter = ?, telegram = ?, pagina_web = ?, foto_perfil = ?, logo = ? WHERE id = ?");
-        $stmt->bind_param("ssssssssssssssssssi", $nombre, $apellido, $profesion, $empresa, $direccion, $telefono, $correo, $whatsapp, $facebook, $tiktok, $instagram, $youtube, $linkedin, $twitter, $telegram, $pagina_web, $fotoPerfilPath, $logoPath, $_SESSION['user_id']);
-        $stmt->execute();
-        $stmt->close();
+        if (empty($error)) {
+            // Actualizar los datos del usuario en la base de datos
+            $stmt = $conn->prepare("UPDATE usuarios SET nombre = ?, apellido = ?, profesion = ?, empresa = ?, direccion = ?, telefono = ?, correo = ?, whatsapp = ?, facebook = ?, tiktok = ?, instagram = ?, youtube = ?, linkedin = ?, twitter = ?, telegram = ?, pagina_web = ?, foto_perfil = ?, logo = ? WHERE id = ?");
+            $stmt->bind_param("ssssssssssssssssssi", $nombre, $apellido, $profesion, $empresa, $direccion, $telefono, $correo, $whatsapp, $facebook, $tiktok, $instagram, $youtube, $linkedin, $twitter, $telegram, $pagina_web, $fotoPerfilPath, $logoPath, $_SESSION['user_id']);
+            $stmt->execute();
+            $stmt->close();
 
-        // Establecer el indicador de éxito para mostrar el modal
-        $success = true;
+            // Establecer el indicador de éxito para mostrar el modal
+            $success = true;
+        }
     }
 }
 ?>
@@ -165,7 +171,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body>
     <div class="container">
         <h2>Editar Perfil</h2>
-        <?php if (isset($error)) { echo "<div class='alert alert-danger'>$error</div>"; } ?>
+        <?php if ($error) { echo "<div class='alert alert-danger'>$error</div>"; } ?>
         <form method="POST" action="editar_perfil.php" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="nombre" class="required-field">Nombre</label>

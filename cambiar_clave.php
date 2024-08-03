@@ -21,12 +21,15 @@ if ($debeCambiarClave == 0) {
     exit();
 }
 
+$error = '';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $nuevaClave = $_POST['nueva_clave'];
     $nuevaClaveConfirmacion = $_POST['nueva_clave_confirmacion'];
 
     // Validación de la nueva clave
-    if ($nuevaClave !== $nuevaClaveConfirmacion) {
+    if (empty($nuevaClave) || empty($nuevaClaveConfirmacion)) {
+        $error = "Todos los campos son obligatorios.";
+    } elseif ($nuevaClave !== $nuevaClaveConfirmacion) {
         $error = "Las claves no coinciden.";
     } elseif (strlen($nuevaClave) < 8) {
         $error = "La clave debe tener al menos 8 caracteres.";
@@ -86,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body>
     <div class="container">
         <h2>Cambiar Clave</h2>
-        <?php if (isset($error)) { echo "<div class='alert alert-danger'>$error</div>"; } ?>
+        <?php if ($error) { echo "<div class='alert alert-danger'>$error</div>"; } ?>
         <form method="POST" action="cambiar_clave.php">
             <div class="form-group">
                 <label for="nueva_clave">Nueva Clave</label>

@@ -16,16 +16,18 @@ if (empty($nombre) || empty($apellido)) {
 // Construir la vCard
 $vcard = "BEGIN:VCARD\n";
 $vcard .= "VERSION:3.0\n";
-$vcard .= "FN:" . $nombre . " " . $apellido . "\n";
-$vcard .= "N:" . $apellido . ";" . $nombre . "\n";
+$vcard .= "FN:" . htmlspecialchars($nombre) . " " . htmlspecialchars($apellido) . "\n";
+$vcard .= "N:" . htmlspecialchars($apellido) . ";" . htmlspecialchars($nombre) . "\n";
 if (!empty($profesion)) {
-    $vcard .= "TITLE:" . $profesion . "\n";
+    $vcard .= "TITLE:" . htmlspecialchars($profesion) . "\n";
 }
-$vcard .= "TEL;TYPE=WORK,VOICE:" . $telefono . "\n";
+if (!empty($telefono)) {
+    $vcard .= "TEL;TYPE=WORK,VOICE:" . htmlspecialchars($telefono) . "\n";
+}
 $vcard .= "END:VCARD";
 
 // Configurar los encabezados para la descarga del archivo
 header('Content-Type: text/vcard; charset=utf-8');
-header('Content-Disposition: attachment; filename="' . $nombre . '_' . $apellido . '.vcf"');
+header('Content-Disposition: attachment; filename="' . htmlspecialchars($nombre) . '_' . htmlspecialchars($apellido) . '.vcf"');
 echo $vcard;
 ?>

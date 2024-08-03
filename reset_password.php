@@ -2,7 +2,12 @@
 session_start();
 include 'config/database.php';
 
-$token = $_GET['token'];
+$token = $_GET['token'] ?? '';
+if (empty($token)) {
+    echo "Token no proporcionado.";
+    exit();
+}
+
 $stmt = $conn->prepare("SELECT user_id FROM password_resets WHERE token = ?");
 $stmt->bind_param("s", $token);
 $stmt->execute();
