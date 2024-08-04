@@ -22,6 +22,8 @@ if ($debeCambiarClave == 0) {
 }
 
 $error = '';
+$claveCambiada = false;
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $nuevaClave = $_POST['nueva_clave'];
     $nuevaClaveConfirmacion = $_POST['nueva_clave_confirmacion'];
@@ -54,9 +56,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $messageAdmin = "El usuario $nombreUsuario (Correo: $correoUsuario) ha cambiado su clave por primera vez.";
         mail($adminEmail, $subjectAdmin, $messageAdmin, $headers);
 
-        // Redirigir al panel del cliente
-        header("Location: panel-cliente.php?clave_cambiada=1");
-        exit();
+        // Marcar clave cambiada para mostrar el modal
+        $claveCambiada = true;
     }
 }
 ?>
@@ -102,5 +103,37 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <button type="submit" class="btn btn-primary btn-block">Cambiar Clave</button>
         </form>
     </div>
+
+    <!-- Modal de confirmación -->
+    <?php if ($claveCambiada): ?>
+    <div class="modal fade" id="claveCambiadaModal" tabindex="-1" role="dialog" aria-labelledby="claveCambiadaModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="claveCambiadaModalLabel">Cambio de Clave</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Su clave ha sido cambiada exitosamente.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="window.location.href='panel-cliente.php'">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        <?php if ($claveCambiada): ?>
+        $(document).ready(function() {
+            $('#claveCambiadaModal').modal('show');
+        });
+        <?php endif; ?>
+    </script>
 </body>
 </html>

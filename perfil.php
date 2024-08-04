@@ -1,5 +1,5 @@
 <?php
-include 'config/database.php'; // Asegúrate de que este archivo incluye la conexión a la base de datos
+include 'config/database.php';
 
 $usuario = htmlspecialchars($_GET['usuario'] ?? '', ENT_QUOTES, 'UTF-8');
 

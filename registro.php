@@ -5,7 +5,7 @@ if (empty($_SESSION['csrf_token'])) {
 }
 
 function getParamValue($param) {
-    return isset($_GET[$param]) ? htmlspecialchars($_GET[$param], ENT_QUOTES, 'UTF-8') : '';
+    return isset($_GET[$param]) ? htmlspecialchars($_GET[$param]) : '';
 }
 ?>
 <!DOCTYPE html>
@@ -123,6 +123,10 @@ function getParamValue($param) {
                 <div class="circle">4</div>
                 <div class="label">Escoger Modelo</div>
             </div>
+            <div class="step" id="step5Indicator">
+                <div class="circle">5</div>
+                <div class="label">Pago</div>
+            </div>
         </div>
         <form id="registrationForm" action="process_registration.php" method="POST" enctype="multipart/form-data" onsubmit="return validateForm()">
             <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
@@ -238,7 +242,27 @@ function getParamValue($param) {
                     </div>
                 </div>
                 <button type="button" class="btn btn-secondary" onclick="previousStep(3)">Volver a Multimedia</button>
-                <button type="submit" class="btn btn-success" onclick="finalizeRegistration()">Finalizar</button>
+                <button type="button" class="btn btn-primary" onclick="validateStep4()">Siguiente</button>
+            </div>
+            <div id="step5" class="step-content" style="display: none;">
+                <h3>Simulación de Pago</h3>
+                <div class="form-group">
+                    <label for="card_number" class="required-field">Número de Tarjeta</label>
+                    <input type="text" class="form-control" id="card_number" name="card_number" required>
+                    <div id="error-card_number" class="error-message">Este campo es obligatorio.</div>
+                </div>
+                <div class="form-group">
+                    <label for="expiry_date" class="required-field">Fecha de Expiración (MM/AA)</label>
+                    <input type="text" class="form-control" id="expiry_date" name="expiry_date" required>
+                    <div id="error-expiry_date" class="error-message">Este campo es obligatorio.</div>
+                </div>
+                <div class="form-group">
+                    <label for="cvv" class="required-field">CVV</label>
+                    <input type="text" class="form-control" id="cvv" name="cvv" required>
+                    <div id="error-cvv" class="error-message">Este campo es obligatorio.</div>
+                </div>
+                <button type="button" class="btn btn-secondary" onclick="previousStep(4)">Volver a Modelo</button>
+                <button type="submit" class="btn btn-success" onclick="finalizeRegistration()">Finalizar y Pagar</button>
             </div>
         </form>
     </div>
@@ -418,6 +442,11 @@ function getParamValue($param) {
             }
         }
 
+        // Función para validar el cuarto paso del formulario
+        function validateStep4() {
+            nextStep(5);
+        }
+
         // Función para avanzar al siguiente paso del formulario
         function nextStep(step) {
             $('.step-content').hide();
@@ -565,7 +594,7 @@ function getParamValue($param) {
             $('#registrationForm').on('keypress', function(e) {
                 if (e.key === 'Enter') {
                     var activeStep = $('.step-content:visible').attr('id');
-                    if (activeStep !== 'step4') {
+                    if (activeStep !== 'step5') {
                         e.preventDefault();
                     }
                 }

@@ -36,23 +36,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit();
     }
 
-    $nombre = htmlspecialchars($_POST['nombre']);
-    $apellido = htmlspecialchars($_POST['apellido']);
-    $profesion = htmlspecialchars($_POST['profesion']);
-    $empresa = htmlspecialchars($_POST['empresa']);
-    $direccion = htmlspecialchars($_POST['direccion']);
-    $telefono = htmlspecialchars($_POST['telefono']);  // Ahora incluye el código del país
-    $correo = htmlspecialchars($_POST['correo']);
-    $whatsapp = htmlspecialchars($_POST['whatsapp']);
-    $facebook = htmlspecialchars($_POST['facebook']);
-    $tiktok = htmlspecialchars($_POST['tiktok']);
-    $instagram = htmlspecialchars($_POST['instagram']);
-    $youtube = htmlspecialchars($_POST['youtube']);
-    $linkedin = htmlspecialchars($_POST['linkedin']);
-    $twitter = htmlspecialchars($_POST['twitter']);
-    $telegram = htmlspecialchars($_POST['telegram']);
-    $pagina_web = htmlspecialchars($_POST['pagina_web']);
-    $modelo = htmlspecialchars($_POST['modelo']);
+    $nombre = $_POST['nombre'];
+    $apellido = $_POST['apellido'];
+    $profesion = $_POST['profesion'];
+    $empresa = $_POST['empresa'];
+    $direccion = $_POST['direccion'];
+    $telefono = $_POST['telefono'];  // Ahora incluye el código del país
+    $correo = $_POST['correo'];
+    $whatsapp = $_POST['whatsapp'];
+    $facebook = $_POST['facebook'];
+    $tiktok = $_POST['tiktok'];
+    $instagram = $_POST['instagram'];
+    $youtube = $_POST['youtube'];
+    $linkedin = $_POST['linkedin'];
+    $twitter = $_POST['twitter'];
+    $telegram = $_POST['telegram'];
+    $pagina_web = $_POST['pagina_web'];
+    $modelo = $_POST['modelo'];
 
     $foto_perfil = $_FILES['foto_perfil'];
     $logo = $_FILES['logo'];
@@ -106,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $allowedExtensions = ['jpg', 'jpeg', 'png'];
 
     if ($foto_perfil['name']) {
-        $fotoPerfilExtension = strtolower(pathinfo($foto_perfil['name'], PATHINFO_EXTENSION));
+        $fotoPerfilExtension = pathinfo($foto_perfil['name'], PATHINFO_EXTENSION);
         if (!in_array($fotoPerfilExtension, $allowedExtensions)) {
             $params['error'] = '2';
             redirectWithParams($params);
@@ -119,7 +119,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     if ($logo['name']) {
-        $logoExtension = strtolower(pathinfo($logo['name'], PATHINFO_EXTENSION));
+        $logoExtension = pathinfo($logo['name'], PATHINFO_EXTENSION);
         if (!in_array($logoExtension, $allowedExtensions)) {
             $params['error'] = '2';
             redirectWithParams($params);
@@ -129,6 +129,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         move_uploaded_file($logo['tmp_name'], $logoPath);
     } else {
         $logoPath = null;
+    }
+
+    // Simulación del pago (Monto a cobrar)
+    $monto = 200.00; // Definir el monto a cobrar aquí
+
+    // Simulación de pago exitoso
+    $pagoExitoso = true; // Cambiar a false para simular un fallo en el pago
+
+    if (!$pagoExitoso) {
+        echo "Error en el procesamiento del pago.";
+        exit();
     }
 
     // Generar URL única para el perfil
